@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace OOP.Encapsulation.ShoppingSpree
 {
-   public class Person
+   public class Person //  створюємо приватні поля
     {
         private string name;
         private decimal money;
@@ -19,12 +19,13 @@ namespace OOP.Encapsulation.ShoppingSpree
 
         public string Name
         {
-            get => this.name;
+            get => this.name;// це щоб не писати {return this.name}
+         
             private set
             {
                 if (value == null)
                 {
-                    throw new ArgumentException("Product name cannot be empty.");
+                    throw new ArgumentException("Product name cannot be empty.");// виводить виключення про помилку
                 }
 
                 this.name = value;
@@ -47,33 +48,33 @@ namespace OOP.Encapsulation.ShoppingSpree
 
         public void AddToBag(Product product)
         {
-            if (this.money - product.Cost < 0)
+            if (this.money - product.Cost < 0) // умова яка вказує на те, що покупцю не вистачає на продукти
             {
-                Console.WriteLine($"{this.name} can't afford {product.Name}");
+                Console.WriteLine($"{this.name} can't afford {product.Name}"); // вивід про не купівлю
             }
             else
             {
-                this.bag.Add(product);
-                this.money -= product.Cost;
-                Console.WriteLine($"{this.Name} bought {product.Name}");
+                this.bag.Add(product); // грошей вистачило, додаємо продукт в сумку
+                this.money -= product.Cost; // віднімаємо від загальної кількості грошей , ціну продукту
+                Console.WriteLine($"{this.Name} bought {product.Name}"); // виводимо повідомлення, клієнт купив продукт
             }
         }
 
-        public override string ToString()
+        public override string ToString() //override потрібний для того, щоб змінити рядок , реалізацію рядка, властивості рядка
         {
             var sb = new StringBuilder();
-            sb.Append($"{this.Name} - ");
+            sb.Append($"{this.Name} - "); // додає рядок до екземпляра sb
 
-            if (this.bag.Count == 0)
+            if (this.bag.Count == 0) // якщо покупець нічого не купив
             {
                 sb.Append("Nothing bought");
             }
             else
             {
-                sb.Append(string.Join(", ", this.bag));
+                sb.Append(string.Join(", ", this.bag));//перераховується що купив покупець //join зчиплює всі введені елементи через кому
             }
 
-            return sb.ToString();
+            return sb.ToString(); //перетворює значення StringBuilder на значення string
         }
     }
 
@@ -133,20 +134,20 @@ namespace OOP.Encapsulation.ShoppingSpree
 
         public void AddMany(string[] parameters)
         {
-            foreach (var parameter in parameters)
+            foreach (var parameter in parameters)// перераховує всі елементи і виконує цикл 
             {
-                var person = parameter.Split("=");
-                if (person.Length == 2)
+                var person = parameter.Split("="); // повертає масив з розділенням =
+                if (person.Length == 2)// якщо довжина рівна 2 елементам
                 {
-                    string name = person[0];
-                    decimal money = decimal.Parse(person[1]);
+                    string name = person[0];// записує ім'я в змінну person
+                    decimal money = decimal.Parse(person[1]);// записує гроші в змінну money
                     try
                     {
-                        this.list.Add(new Person(name, money));
+                        this.list.Add(new Person(name, money));// додає ім'я і гроші до list 
                     }
                     catch (ArgumentException e)
                     {
-                        Console.WriteLine(e.Message);
+                        Console.WriteLine(e.Message);//повертає повідомлення про помилку
                         throw;
                     }
                 }
@@ -155,20 +156,20 @@ namespace OOP.Encapsulation.ShoppingSpree
 
         public void BuyProduct(string[] parameters, ProductCatalog products)
         {
-            string personName = parameters[0];
-            string productName = parameters[1];
+            string personName = parameters[0]; // записуємо ім'я як перший елемент масиву
+            string productName = parameters[1]; // записуємо продукт як 2 елем масиву
 
-            Person currentPerson = this.list.FirstOrDefault(x => x.Name.Equals(personName));
-            Product currentProduct = products.Catalog.FirstOrDefault(x => x.Name.Equals(productName));
-
-            currentPerson.AddToBag(currentProduct);
+            Person currentPerson = this.list.FirstOrDefault(x => x.Name.Equals(personName)); // firstofdefault повертає перший елемент послідовності
+            // Equals - перевіряє чи введене ім'я співпадає з першим введеним ім'ям(яке ви ввели на початку)
+            Product currentProduct = products.Catalog.FirstOrDefault(x => x.Name.Equals(productName)); 
+            currentPerson.AddToBag(currentProduct); // додає покуацю даний продукт в сумку
         }
 
         public void Print()
         {
             foreach (var person in this.list)
             {
-                Console.WriteLine(person);
+                Console.WriteLine(person); //виводить покупців зі списку
             }
         }
     }
@@ -198,7 +199,7 @@ namespace OOP.Encapsulation.ShoppingSpree
                     decimal productCost = decimal.Parse(product[1]);
                     try
                     {
-                        this.catalog.Add(new Product(productName, productCost));
+                        this.catalog.Add(new Product(productName, productCost));// додаємо в каталог новий продукт та його ціну
                     }
                     catch (ArgumentException e)
                     {
@@ -217,7 +218,7 @@ namespace OOP.Encapsulation.ShoppingSpree
             var shoppers = new Shoppers();
             var products = new ProductCatalog();
 
-            var peopleParameters = Console.ReadLine().Split(";");
+            var peopleParameters = Console.ReadLine().Split(";");// вводимо покупців через ;
             var productsParameters = Console.ReadLine().Split(";");
 
             shoppers.AddMany(peopleParameters);
@@ -227,8 +228,8 @@ namespace OOP.Encapsulation.ShoppingSpree
 
             while (input != "END")
             {
-                var parameters = input.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                shoppers.BuyProduct(parameters, products);
+                var parameters = input.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);// виключити елементи масиву, які мають пусті рядки
+                shoppers.BuyProduct(parameters, products);// вивести покупців, і продукти які вони купили 
                 input = Console.ReadLine();
             }
 
